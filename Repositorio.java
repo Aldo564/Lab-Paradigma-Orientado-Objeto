@@ -1,4 +1,5 @@
 import java.awt.desktop.SystemSleepEvent;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -175,6 +176,9 @@ public class Repositorio
 
     }
 
+    // Funcion que compara los nombres de archivos ingresados con los archivos en Work Space y guarda el indice de aquellos que si existan.
+    // Entrada: un ArrayList de tipo String con los nombres de los archivos que se desean agregar.
+    // Salida: un ArrayList de tipo Integer con los indices de los archivos que coinciden (indice en Work Space).
     private ArrayList<Integer> comparar_WS_nombres(ArrayList<String> nombres)
     {
         int largo_Nombres = nombres.size();
@@ -201,6 +205,135 @@ public class Repositorio
     public void gitCommit()
     {
         System.out.println("Funcion gitCommit");
+
+        int ver = 0;
+        String autor = "\0";
+        String mensaje= "\0";
+
+        if (this.zona.index.archivos.size() == 0)
+        {
+            System.out.println("No se puede realizar un commit si no se han agregado archivos");
+        }
+        else
+        {
+            //Nombre del Commit
+            while (ver == 0)
+            {
+                try {
+                    System.out.println("#####################################################");
+                    System.out.print("# Ingrese el autor del commit: ");
+                    autor = sc.nextLine();
+                    System.out.println("#####################################################");
+                    ver = 1;
+                }
+                catch (Exception e)
+                {
+                    System.out.println("# Ingrese un nombre valido.");
+                }
+            }
+
+            //Mensaje del Commit
+            while (ver == 1)
+            {
+                try {
+                    System.out.println("#####################################################");
+                    System.out.print("# Ingrese el mensaje descriptivo del commit: ");
+                    mensaje = sc.nextLine();
+                    System.out.println("#####################################################");
+                    ver = 2;
+                }
+                catch (Exception e)
+                {
+                    System.out.println("# Ingrese un mensaje valido.");
+                }
+            }
+        }
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String fecha = currentDateTime.format(format1);
+
+        // La represetanción de la lista cambios, será un ArrayList de tipo String donde se pondra una comparación del ultimo commit de
+        // Local Repository con este.
+        // Se usara un prefijo antes de cada nombre de archivo para saber que sucedio con el:
+        //      + para indicar que se agregó este archivo.
+        //      - para indicar que se eliminó este archivo.
+        //      ~ para indicar que se modificó este archivo.
+
+        //      = para indicar que no realizo nada con este archivo.
+
+        ArrayList<String> cambios = comparar_LR_I();
+
+        this.zona.index.commit = new Commit(autor, fecha, mensaje, cambios, this.zona.index.archivos);
+
+        this.zona.localRepo.commits.add(this.zona.index.commit);
+
+    }
+
+    private ArrayList<String> comparar_LR_I()
+    {
+        ArrayList<String> cambios = new ArrayList<>();
+
+        String aux = "\0";
+
+        String agregar = "+";
+        String eliminar = "-";
+        String modificar = "~";
+
+        ArrayList<Commit> local_Commits = this.zona.localRepo.commits;
+
+        ArrayList<Archivo> index_Archivos = this.zona.index.archivos;
+        ArrayList<Archivo> index_Archivos_copy = this.zona.index.archivos;
+
+        // Si no existen commits en el local repo, significa que todos los archivos son nuevos
+        if (local_Commits.size() == 0)
+        {
+            for (Archivo archivo : index_Archivos)
+            {
+                aux = "\0"; // reset para que no exista basura dentro.
+                aux = agregar + archivo.nombre;
+                cambios.add(aux);
+            }
+        }
+        // Aqui iria else if para los archivos que se han modificado.
+        else
+        {
+            // Se generan copias de los archivos de index y los archivos del commit que comparamos para poder modificarlos sin repercusiones.
+            // Borrando los repetidos en ambas listas nos quedaran los archivos agregados (+) en Index_Archivos y los archivos eliminados (-) en
+            // ultimo_Commit_Archivos.
+
+            ArrayList<Archivo> ultimo_Commit_Archivos = local_Commits.get(local_Commits.size()-1).archivos;
+            ArrayList<Archivo> ultimo_Commit_Archivos_copy = ultimo_Commit_Archivos;
+
+            for (int i = 0; i < index_Archivos.size() ; i++)
+            {
+                for (int k = 0; k < ultimo_Commit_Archivos.size(); k++)
+                {
+                    if (index_Archivos_copy.get(i).nombre.equals(ultimo_Commit_Archivos_copy.get(k).nombre))
+                    {
+                        index_Archivos.remove(index_Archivos_copy.get(i).nombre);
+                        ultimo_Commit_Archivos.remove(index_Archivos_copy.get(i).nombre);
+                    }
+                }
+            }
+
+            for (Archivo archivo : index_Archivos)
+            {
+                aux = "\0"; // reset para que no exista basura dentro.
+                aux = agregar + archivo.nombre;
+                cambios.add(aux);
+            }
+
+            for (Archivo archivo : ultimo_Commit_Archivos)
+            {
+                aux = "\0"; // reset para que no exista basura dentro.
+                aux = eliminar + archivo.nombre;
+                cambios.add(aux);
+            }
+
+        }
+
+        return cambios;
     }
 
     // Función que "sube" al Remote Repository los commits almacenados en el Local Repository.

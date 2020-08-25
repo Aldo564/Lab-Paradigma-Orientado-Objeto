@@ -28,10 +28,12 @@ public class Main {
 
         ArrayList<Archivo> archivos = new ArrayList<>();
         ArrayList<Commit> commits = new ArrayList<>();
+        ArrayList<String> strings = new ArrayList<>();
         String vacio = "";
+        Commit commit = new Commit(vacio, vacio, vacio, strings, archivos);
 
         WorkSpace ws = new WorkSpace(archivos);
-        Index i = new Index(archivos, vacio, vacio);
+        Index i = new Index(archivos, vacio, vacio, vacio, commit);
         LocalRepo lr = new LocalRepo(commits);
         RemoteRepo rr = new RemoteRepo(commits);
 
@@ -60,7 +62,7 @@ public class Main {
             }
             catch (Exception e)
             {
-                System.out.println("Ingrese un nombre valido.");
+                System.out.println("# Ingrese un nombre valido.");
             }
         }
 
@@ -75,7 +77,7 @@ public class Main {
             }
             catch (Exception e)
             {
-                System.out.println("Ingrese un nombre de autor valido.");
+                System.out.println("# Ingrese un nombre de autor valido.");
             }
         }
 
