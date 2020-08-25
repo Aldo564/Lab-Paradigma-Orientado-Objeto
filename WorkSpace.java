@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class WorkSpace
 {
-    public ArrayList<Commit> commits;
+    public ArrayList<Archivo> archivos;
 
-    public WorkSpace(ArrayList<Commit> commits)
+    public WorkSpace(ArrayList<Archivo> archivos)
     {
-        this.commits = commits;
+        this.archivos = archivos;
     }
 }

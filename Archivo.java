@@ -3,10 +3,10 @@
 public class Archivo
 {
     public String nombre;
-    public Fecha fecha;
+    public String fecha;
     public String contenido;
 
-    public Archivo(String nombre, Fecha fecha, String contenido)
+    public Archivo(String nombre, String fecha, String contenido)
     {
         this.nombre = nombre;
         this.fecha = fecha;
