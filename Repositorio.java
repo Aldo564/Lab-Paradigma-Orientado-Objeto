@@ -262,6 +262,7 @@ public class Repositorio
         //      + para indicar que se agregó este archivo.
         //      - para indicar que se eliminó este archivo.
         //      ~ para indicar que se modificó este archivo.
+        //      = para indicar que no hubo cambios en este archivo.
 
         ArrayList<String> cambios = comparar_LR_I();
 
@@ -280,7 +281,8 @@ public class Repositorio
 
         String agregar = "+";
         String eliminar = "-";
-        //String modificar = "~";
+        String modificar = "~";
+        String igual = "=";
 
         ArrayList<Commit> local_Commits = this.zona.localRepo.commits;
 
@@ -297,7 +299,6 @@ public class Repositorio
                 cambios.add(aux);
             }
         }
-        // Aqui iria else if para los archivos que se han modificado.
         else
         {
             // Se generan copias de los archivos de index y los archivos del commit que comparamos para poder modificarlos sin repercusiones.
@@ -307,14 +308,37 @@ public class Repositorio
             ArrayList<Archivo> ultimo_Commit_Archivos = local_Commits.get(local_Commits.size()-1).archivos;
             ArrayList<Archivo> ultimo_Commit_Archivos_copy = ultimo_Commit_Archivos;
 
+            ArrayList<Archivo> posibles_modificados = new ArrayList<>();
+
             for (int i = 0; i < index_Archivos.size() ; i++)
             {
                 for (int k = 0; k < ultimo_Commit_Archivos.size(); k++)
                 {
                     if (index_Archivos_copy.get(i).nombre.equals(ultimo_Commit_Archivos_copy.get(k).nombre))
                     {
+                        posibles_modificados.add(index_Archivos_copy.get(i));
+                        posibles_modificados.add(ultimo_Commit_Archivos_copy.get(i));
                         index_Archivos.remove(index_Archivos_copy.get(i).nombre);
-                        ultimo_Commit_Archivos.remove(index_Archivos_copy.get(i).nombre);
+                        ultimo_Commit_Archivos.remove(ultimo_Commit_Archivos_copy.get(i).nombre);
+                    }
+                }
+            }
+
+            for (int i = 0; i < (posibles_modificados.size()/2); i+=2)
+            {
+                if (posibles_modificados.get(i).nombre.equals(posibles_modificados.get(i+1).nombre))
+                {
+                    if (posibles_modificados.get(i).contenido.equals(posibles_modificados.get(i+1).contenido))
+                    {
+                        aux = "\0";
+                        aux = igual + posibles_modificados.get(i).nombre;
+                        cambios.add(aux);
+                    }
+                    else
+                    {
+                        aux = "\0";
+                        aux = modificar + posibles_modificados.get(i).nombre;
+                        cambios.add(aux);
                     }
                 }
             }
