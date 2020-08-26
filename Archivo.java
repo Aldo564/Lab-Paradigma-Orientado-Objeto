@@ -1,5 +1,3 @@
-
-
 public class Archivo
 {
     public String nombre;

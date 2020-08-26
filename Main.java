@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
 
+    // javac Main.java Repositorio.java Zones.java Commit.java WorkSpace.java Index.java LocalRepo.java RemoteRepo.java Archivo.java
     static Scanner sc = new Scanner(System.in);
 
     public Repositorio repositorio;
