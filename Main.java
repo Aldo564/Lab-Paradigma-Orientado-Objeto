@@ -44,6 +44,9 @@ public class Main {
         return repo;
     }
 
+    // Funcion que recibe los datos del repositorio y genera este.
+    // Entrada: no tiene.
+    // Salida: no tiene.
     public static Repositorio entrada_Datos()
     {
         int ver = 0;

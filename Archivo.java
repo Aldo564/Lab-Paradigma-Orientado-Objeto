@@ -13,6 +13,4 @@ public class Archivo
         this.contenido = contenido;
     }
 
-
-
 }

@@ -1,13 +1,13 @@
-import java.awt.desktop.SystemSleepEvent;
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Repositorio
 {
-    Scanner sc = new Scanner(System.in);
+    public Scanner sc = new Scanner(System.in);
 
     public String nombre;
     public String autor;
@@ -45,7 +45,7 @@ public class Repositorio
     {
 
         int ver = 0;
-        String respuesta = "";
+        String respuesta;
 
         while (ver == 0)
         {
@@ -160,20 +160,21 @@ public class Repositorio
             }
         }
 
+
         // Rescatando los indices que calzen
         ArrayList<Integer> indices = comparar_WS_nombres(nombres);
-
-        for (int indice : indices) {
-            this.zona.index.archivos.add(this.zona.workSpace.archivos.get(indice));
-        }
 
         // En caso de que ninguno calce se dara aviso
         if (indices.size() == 0)
         {
             System.out.println("# No se encontro ningun archivo mencionado en los archivos del Work Space.\n# Porfavor asegurese de agregar los archivos en primera instancia.");
         }
-
-
+        else
+        {
+            for (int indice : indices) {
+                this.zona.index.archivos.add(this.zona.workSpace.archivos.get(indice));
+            }
+        }
     }
 
     // Funcion que compara los nombres de archivos ingresados con los archivos en Work Space y guarda el indice de aquellos que si existan.
@@ -202,9 +203,11 @@ public class Repositorio
     }
 
     // Función que genera un commit desde Index a Local Repository con los archivos en Index y el mensaje pedido.
+    // Entrada: no tiene.
+    // Salida: no tiene.
     public void gitCommit()
     {
-        System.out.println("Funcion gitCommit");
+        //System.out.println("Funcion gitCommit");
 
         int ver = 0;
         String autor = "\0";
@@ -260,13 +263,12 @@ public class Repositorio
         //      - para indicar que se eliminó este archivo.
         //      ~ para indicar que se modificó este archivo.
 
-        //      = para indicar que no realizo nada con este archivo.
-
         ArrayList<String> cambios = comparar_LR_I();
 
         this.zona.index.commit = new Commit(autor, fecha, mensaje, cambios, this.zona.index.archivos);
 
         this.zona.localRepo.commits.add(this.zona.index.commit);
+        this.zona.remoteRepo.estado_actualizacion = false;
 
     }
 
@@ -274,11 +276,11 @@ public class Repositorio
     {
         ArrayList<String> cambios = new ArrayList<>();
 
-        String aux = "\0";
+        String aux;
 
         String agregar = "+";
         String eliminar = "-";
-        String modificar = "~";
+        //String modificar = "~";
 
         ArrayList<Commit> local_Commits = this.zona.localRepo.commits;
 
@@ -337,15 +339,40 @@ public class Repositorio
     }
 
     // Función que "sube" al Remote Repository los commits almacenados en el Local Repository.
+    // Entrada: no tiene.
+    // Salida: no tiene.
     public void gitPush()
     {
-        System.out.println("Funcion gitPush");
+        //System.out.println("Funcion gitPush");
+
+        this.zona.remoteRepo.commits = this.zona.localRepo.commits;
+        this.zona.remoteRepo.estado_actualizacion = true;
     }
 
     // Función que "descarga" los commits desde Remote Repository a Work Space.
+    // Entrada: no tiene.
+    // Salida: no tiene.
     public void gitPull()
     {
-        System.out.println("Funcion gitPull");
+        //System.out.println("Funcion gitPull");
+
+        this.zona.workSpace.archivos = union(this.zona.workSpace.archivos, this.zona.remoteRepo.commits.get(this.zona.remoteRepo.commits.size()-1).archivos);
+    }
+
+    // Funcion que genera una union sin elementos repetidos de dos ArrayList
+    // Entrada: Dos ArrayList de tipo T, este tipo hace referencia a cualquier tipo, pero deben ser iguales.
+    // Salida: Un ArrayList con la union de las entradas sin elementos repetidos.
+    // Funcion recuperada de:
+    //      https://stackoverflow.com/questions/5283047/intersection-and-union-of-arraylists-in-java
+
+    public <T> ArrayList<T> union(ArrayList<T> list1, ArrayList<T> list2)
+    {
+        Set<T> set = new HashSet<>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        return new ArrayList<>(set);
     }
 
     // Función que nos entrega información del Repositorio tal como:
@@ -357,13 +384,80 @@ public class Repositorio
     //      - Estado de actualización del Remote Repository (al dia o no).
     public void gitStatus()
     {
-        System.out.println("Funcion gitStatus");
+        //System.out.println("Funcion gitStatus");
+
+        System.out.println("#####################################################");
+        System.out.println("# Estatus del Repositorio");
+        System.out.println("# Nombre del repositorio: " + this.nombre);
+        System.out.println("# Autor del repositorio: " + this.autor);
+        System.out.println("# Numero de archivos en el Work Space: " + this.zona.workSpace.archivos.size());
+        System.out.println("# Numero de archivos en el Index: " + this.zona.index.archivos.size());
+        System.out.println("# Numero de commits en el Local Repository: " + this.zona.localRepo.commits.size());
+
+        if (this.zona.remoteRepo.estado_actualizacion)
+        {
+            System.out.println("# Estado de actualizacion del Remote Repository: Al dia");
+        }
+        else
+        {
+            System.out.println("# Estado de actualización del Remote Repository: No al dia");
+        }
+
+        System.out.println("#####################################################");
+
     }
 
-    // Funcion que crea un nuevo archivo tipo Archivo.
+    // Funcion que crea un nuevo archivo tipo Archivo y lo agrega a Work Space.
+    // Entrada: no tiene.
+    // Salida: no tiene.
     private void nuevoArchivo()
     {
-        System.out.println("Funcion nuevoArchivo");
+        //System.out.println("Funcion nuevoArchivo");
+
+        int ver = 0;
+        String nombre = "\0";
+        String contenido = "\0";
+
+        while (ver == 0)
+        {
+            try {
+                System.out.println("#####################################################");
+                System.out.print("# Ingrese el nombre del archivo (con extension): ");
+                nombre = sc.nextLine();
+                System.out.println("#####################################################");
+                ver = 1;
+            }
+            catch (Exception e)
+            {
+                System.out.println("# Ingrese un nombre valido.");
+            }
+        }
+
+        while (ver == 1)
+        {
+            try {
+                System.out.println("#####################################################");
+                System.out.print("# Ingrese el contenido del archivo: ");
+                contenido = sc.nextLine();
+                System.out.println("#####################################################");
+                ver = 2;
+            }
+            catch (Exception e)
+            {
+                System.out.println("# Ingrese contenido valido.");
+            }
+        }
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String fecha = currentDateTime.format(format1);
+
+        Archivo archivo = new Archivo(nombre, fecha, contenido);
+
+
+        this.zona.workSpace.archivos.add(archivo);
+
+
     }
 
 }
