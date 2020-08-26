@@ -14,9 +14,6 @@ public class Main {
     public static void main(String[] args)
     {
         Repositorio repo = gitInit();
-
-        mostrar_Repo(repo);
-
         repo.menu();
     }
 
@@ -97,16 +94,6 @@ public class Main {
         Repositorio repo = new Repositorio(nombre, autor, fecha);
         return repo;
     }
-
-
-    public static void  mostrar_Repo(Repositorio repo)
-    {
-        System.out.println("Nombre del repo: " + repo.getNombre());
-        System.out.println("Nombre del autor: " +  repo.getAutor());
-        System.out.println("Fecha de creacion del repo: " + repo.getFecha());
-
-    }
-
 
 }
 

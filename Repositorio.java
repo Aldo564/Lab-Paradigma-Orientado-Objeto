@@ -14,27 +14,13 @@ public class Repositorio
     public String fecha;
     public Zones zona;
 
+
     // Función constructora de Repositorio.
     public Repositorio(String nombre, String autor, String fecha)
     {
         this.nombre = nombre;
         this.autor = autor;
         this.fecha = fecha;
-    }
-
-    public String getNombre()
-    {
-        return this.nombre;
-    }
-
-    public String getAutor()
-    {
-        return this.autor;
-    }
-
-    public Object getFecha()
-    {
-        return this.fecha;
     }
 
     // Función con la cual navegamos por el programa. 
@@ -90,7 +76,6 @@ public class Repositorio
 
         }
     }
-
 
     // Función que muestra el menu principal.
     // Entrada: no tiene.
@@ -273,6 +258,9 @@ public class Repositorio
 
     }
 
+    // Funcion que compara los archivos de Local Repository e Index para verificar los cambios entre el commmit entrante y el ultimo en Local Repository
+    // Entrada: no tiene.
+    // Salida: no tiene.
     private ArrayList<String> comparar_LR_I()
     {
         ArrayList<String> cambios = new ArrayList<>();
@@ -380,7 +368,7 @@ public class Repositorio
     {
         //System.out.println("Funcion gitPull");
 
-        this.zona.workSpace.archivos = union(this.zona.workSpace.archivos, this.zona.remoteRepo.commits.get(this.zona.remoteRepo.commits.size()-1).archivos);
+        this.zona.workSpace.archivos = union(this.zona.remoteRepo.commits.get(this.zona.remoteRepo.commits.size()-1).archivos, this.zona.workSpace.archivos);
     }
 
     // Funcion que genera una union sin elementos repetidos de dos ArrayList
