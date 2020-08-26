@@ -64,11 +64,11 @@ public class Repositorio
                     break;
 
                 case "3":
-                    gitPull();
+                    gitPush();
                     break;
 
                 case "4":
-                    gitPush();
+                    gitPull();
                     break;
 
                 case "5":
@@ -101,8 +101,8 @@ public class Repositorio
         System.out.println("# Escoja su opcion:");
         System.out.println("# 1) Add");
         System.out.println("# 2) Commit");
-        System.out.println("# 3) Pull");
-        System.out.println("# 4) Push");
+        System.out.println("# 3) Push");
+        System.out.println("# 4) Pull");
         System.out.println("# 5) Status");
         System.out.println("# 6) Crear nuevo archivo");
         System.out.println("# 7) Salir");
@@ -225,7 +225,7 @@ public class Repositorio
                 try {
                     System.out.println("#####################################################");
                     System.out.print("# Ingrese el autor del commit: ");
-                    autor = sc.nextLine();
+                    nombre = sc.nextLine();
                     System.out.println("#####################################################");
                     ver = 1;
                 }
@@ -453,7 +453,6 @@ public class Repositorio
         String fecha = currentDateTime.format(format1);
 
         Archivo archivo = new Archivo(nombre, fecha, contenido);
-
 
         this.zona.workSpace.archivos.add(archivo);
 

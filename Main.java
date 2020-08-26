@@ -26,16 +26,20 @@ public class Main {
     {
         Repositorio repo = entrada_Datos();
 
-        ArrayList<Archivo> archivos = new ArrayList<>();
-        ArrayList<Commit> commits = new ArrayList<>();
+        ArrayList<Archivo> archivos_ws = new ArrayList<>();
+        ArrayList<Archivo> archivos_i = new ArrayList<>();
+        ArrayList<Archivo> archivos_commit = new ArrayList<>();
+
+        ArrayList<Commit> commits_lr = new ArrayList<>();
+        ArrayList<Commit> commits_rr = new ArrayList<>();
         ArrayList<String> strings = new ArrayList<>();
         String vacio = "";
-        Commit commit = new Commit(vacio, vacio, vacio, strings, archivos);
+        Commit commit = new Commit(vacio, vacio, vacio, strings, archivos_commit);
 
-        WorkSpace ws = new WorkSpace(archivos);
-        Index i = new Index(archivos, vacio, vacio, vacio, commit);
-        LocalRepo lr = new LocalRepo(commits);
-        RemoteRepo rr = new RemoteRepo(commits);
+        WorkSpace ws = new WorkSpace(archivos_ws);
+        Index i = new Index(archivos_i, vacio, vacio, vacio, commit);
+        LocalRepo lr = new LocalRepo(commits_lr);
+        RemoteRepo rr = new RemoteRepo(commits_rr);
 
         Zones zona = new Zones(ws, i, lr, rr);
 
