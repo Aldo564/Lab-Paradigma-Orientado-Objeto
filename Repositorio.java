@@ -210,7 +210,7 @@ public class Repositorio
                 try {
                     System.out.println("#####################################################");
                     System.out.print("# Ingrese el autor del commit: ");
-                    nombre = sc.nextLine();
+                    autor = sc.nextLine();
                     System.out.println("#####################################################");
                     ver = 1;
                 }
