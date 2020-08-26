@@ -103,7 +103,7 @@ public class Repositorio
         System.out.println("# 2) Commit");
         System.out.println("# 3) Push");
         System.out.println("# 4) Pull");
-        System.out.println("# 5) Status");
+        System.out.println("# 5) Estatus");
         System.out.println("# 6) Crear nuevo archivo");
         System.out.println("# 7) Salir");
         System.out.println("#####################################################");
